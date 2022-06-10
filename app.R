@@ -17,10 +17,11 @@ server <- function(input, output, session) {
   click_data <- reactive(event_data("plotly_click", source = "phy"))
   
   observeEvent(click_data(), {
-    
     click <- click_data()
-    vals$tree_df <- select_clade(vals$tree_df, click)
-    print(vals$tree_df)
+    if(!is.null(click) & !is.null(click$customdata)){
+      vals$tree_df <- select_clade(vals$tree_df, click)
+      print(vals$tree_df)
+    }
   })
   
 }

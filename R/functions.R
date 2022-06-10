@@ -28,19 +28,16 @@ select_clade <- function(tree_df, click_data) {
       node_color = "unselected"
     ) 
   
-  if(is.null(click_data)){
+  if(is.null(click_data) | is.null(click_data$customdata)){
     clade_df <- NULL
+    clicked_node <- NULL
   }
   
 
-  if(!is.null(click_data)){
+  if(!is.null(click_data) & !is.null(click_data$customdata)){
     clicked_node <- click_data$customdata
-    if(!is.null(clicked_node)){
-      clade_df <- offspring(tree_df, clicked_node)
-    }else{
-      clade_df <- NULL
-    }
-    
+    clade_df <- offspring(tree_df, clicked_node)
+      
   }
   
   
