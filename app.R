@@ -8,7 +8,7 @@ server <- function(input, output, session) {
   
   vals <- reactiveValues()
   set.seed(37)
-  vals$tree_df <- random_tree_df(8)
+  vals$tree_df <- generate_tree_df(n = 20)
   
   observeEvent(vals$tree_df, {
     phyOutputServer("tree", vals$tree_df, source = "phy")

@@ -1,11 +1,17 @@
 #' @export
-random_tree_df <- function(n){
+generate_tree_df <- function(tree = NULL, n = NULL){
+  
   require(ape)
   require(ggtree)
   require(treeio)
   
-  tree <- ape::rtree(n)
-  tree <- treeio::as.ultrametric(tree)
+  
+  if(is.null(tree)){
+    if(is.null(n)) stop("provide a number of tips")
+    tree <- ape::rtree(n)
+    tree <- treeio::as.ultrametric(tree)
+  }
+
   
   phy_plot <- ggtree(tree)
   
