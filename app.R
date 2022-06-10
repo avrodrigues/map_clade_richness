@@ -5,23 +5,24 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  set.seed(37)
-  
-  tree_df <- random_tree_df(10)
   
   vals <- reactiveValues()
+  set.seed(37)
+  vals$tree_df <- random_tree_df(8)
+  
+  observeEvent(vals$tree_df, {
+    phyOutputServer("tree", vals$tree_df, source = "phy")
 
-  phyOutputServer("tree", tree_df, source = "phy")
+  })
   click_data <- reactive(event_data("plotly_click", source = "phy"))
   
-  observeEvent(click_data(),{
-    click_df <- click_data()
-    node <- click_df$customdata
-    if(!is.null(node)){
-     clade_df <- offspring(tree_df, node)
-     print(clade_df)
-    }
-   })
+  observeEvent(click_data(), {
+    
+    click <- click_data()
+    vals$tree_df <- select_clade(vals$tree_df, click)
+    print(vals$tree_df)
+  })
+  
 }
 
 shinyApp(ui, server)
