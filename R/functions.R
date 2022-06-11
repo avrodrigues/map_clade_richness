@@ -73,3 +73,41 @@ select_clade <- function(tree_df, click_data) {
   
   tree_df
 }
+
+
+random_occ_df <- function(tree_df){
+  require(dplyr)
+  
+  n <- sum(tree_df$isTip)
+  sp <- tree_df$label[tree_df$isTip]
+  
+  n_grp <- round(n/5)
+  n_grp <- ifelse(n_grp > 1, n_grp, 2)
+  
+  k_grp <- kmeans(cophenetic(as.phylo(tree_df)), n_grp)$cluster
+  
+  k_list <- lapply(unique(k_grp), function(i) names(k_grp)[k_grp == i])
+  
+  l_occ_df_rdm <- list()
+  idx <- 1
+  for(k in seq_along(k_list)){
+    x <- runif(1, 1, 20)
+    y <- runif(1, 1, 20)
+    
+    for(i in seq_along(k_list[[k]])){
+      
+      sp <- k_list[[k]][i]
+      x_norm <- rnorm(75, x, runif(1, 1, 5)) |> round(0)
+      y_norm <- rnorm(75, y, runif(1, 1, 5)) |> round(0) 
+      
+      l_occ_df_rdm[[idx]] <- data.frame(x = x_norm, y = y_norm, species = sp)
+      idx <- idx + 1
+    }
+  }
+
+  
+  l_occ_df_rdm %>%
+    bind_rows() %>% 
+    filter(x %in% 1:20, y %in% 1:20)
+  
+}

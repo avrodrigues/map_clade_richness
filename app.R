@@ -1,19 +1,36 @@
 source("R/functions.R")
 
 ui <- fluidPage(
-  phyOutput("tree")
+  column(
+    6, 
+    phyOutput("tree")
+    ), 
+  column(
+    6, 
+    richnessUI("richness")
+  )
+  
 )
 
 server <- function(input, output, session) {
   
   vals <- reactiveValues()
-  set.seed(37)
-  vals$tree_df <- generate_tree_df(n = 20)
+  n = 100
+  set.seed(1006)
+  vals$tree_df <- generate_tree_df(n = n)
+  set.seed(1006)
+  t_df <- generate_tree_df(n = n)
+  occ_df_rdm <- random_occ_df(t_df)
   
   observeEvent(vals$tree_df, {
     phyOutputServer("tree", vals$tree_df, source = "phy")
+    
+    #set.seed(52)
+    
+    richnessServer("richness", vals$tree_df, occ_df_rdm)
 
   })
+  
   click_data <- reactive(event_data("plotly_click", source = "phy"))
   
   observeEvent(click_data(), {
@@ -23,6 +40,8 @@ server <- function(input, output, session) {
       print(vals$tree_df)
     }
   })
+  
+  
   
 }
 
